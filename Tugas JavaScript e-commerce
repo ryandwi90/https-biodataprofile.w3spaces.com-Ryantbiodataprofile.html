@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Produk E-Commerce</title>
+  <style>
+    /* Contoh styling sederhana */
+    .product {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .product img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .product h2 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+    .product p {
+      margin: 3px 0;
+    }
+    #product-list {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daftar Produk</h1>
+  <!-- Filter Kategori -->
+  <label for="categoryFilter">Filter Kategori:</label>
+  <select id="categoryFilter">
+    <option value="all">Semua</option>
+    <option value="elektronik">Elektronik</option>
+    <option value="fashion">Fashion</option>
+    <option value="makanan">Makanan</option>
+  </select>
+  <!-- Container untuk menampilkan produk -->
+  <div id="product-list"></div>
+  <script>
+    // 1. Buat array data produk
+    const products = [
+      {
+        name: "Laptop ABC",
+        price: 7500000,
+        description: "Laptop berkualitas dengan prosesor cepat.",
+        category: "elektronik",
+        image: "https://via.placeholder.com/80?text=Laptop" // Contoh link gambar
+      },
+      {
+        name: "Smartphone XYZ",
+        price: 3000000,
+        description: "Smartphone dengan kamera canggih.",
+        category: "elektronik",
+        image: "https://via.placeholder.com/80?text=Smartphone"
+      },
+      {
+        name: "Kaos Polos",
+        price: 50000,
+        description: "Kaos polos nyaman untuk sehari-hari.",
+        category: "fashion",
+        image: "https://via.placeholder.com/80?text=Kaos"
+      },
+      {
+        name: "Keripik Kentang",
+        price: 15000,
+        description: "Camilan renyah berbagai rasa.",
+        category: "makanan",
+        image: "https://via.placeholder.com/80?text=Keripik"
+      }
+    ];
+    // Fungsi untuk menampilkan produk
+    function displayProducts(productArray) {
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = ""; // Bersihkan konten sebelum menampilkan
+      productArray.forEach(product => {
+        // Buat elemen container produk
+        const productDiv = document.createElement('div');
+        productDiv.classList.add('product');
+        // Buat elemen gambar
+        const productImg = document.createElement('img');
+        productImg.src = product.image;
+        productImg.alt = product.name;
+        // Buat elemen judul (nama produk)
+        const productName = document.createElement('h2');
+        productName.textContent = product.name;
+        // Buat elemen harga
+        const productPrice = document.createElement('p');
+        productPrice.textContent = `Harga: Rp ${product.price}`;
+        // Buat elemen deskripsi
+        const productDesc = document.createElement('p');
+        productDesc.textContent = product.description;
+        // Susun elemen ke dalam container produk
+        productDiv.appendChild(productImg);
+        const infoDiv = document.createElement('div');
+        infoDiv.appendChild(productName);
+        infoDiv.appendChild(productPrice);
+        infoDiv.appendChild(productDesc);
+        productDiv.appendChild(infoDiv);
+        // Masukkan container produk ke dalam #product-list
+        productList.appendChild(productDiv);
+      });
+    }
+    // Tampilkan semua produk saat halaman pertama kali dibuka
+    displayProducts(products);
+    // 2. Tambahkan fitur filter sederhana
+    const categoryFilter = document.getElementById('categoryFilter');
+    categoryFilter.addEventListener('change', () => {
+      const selectedCategory = categoryFilter.value;  
+      // Jika pilih "all", tampilkan semua produk
+      if (selectedCategory === "all") {
+        displayProducts(products);
+      } else {
+        // Jika tidak, filter produk berdasarkan kategori
+        const filteredProducts = products.filter(product => product.category === selectedCategory);
+        displayProducts(filteredProducts);
+      }
+    });
+  </script>
+</body>
+</html>
