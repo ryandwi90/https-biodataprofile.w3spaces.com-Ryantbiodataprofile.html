@@ -1,0 +1,25 @@
+laravel new ecommerce
+composer create-project laravel/laravel ecommerce
+cd ecommerce
+php artisan serve
+use Illuminate\Support\Facades\Route;
+Route::get('/', function () {
+    return view('welcome'); // Bisa ganti nanti ke home.blade.php
+});
+Route::get('/products', function () {
+    return 'Daftar Produk';
+});
+Route::get('/cart', function () {
+    return 'Keranjang Belanja';
+});
+Route::get('/checkout', function () {
+    return 'Halaman Checkout';
+});
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ecommerce
+DB_USERNAME=root
+DB_PASSWORD=
+php artisan make:model Product -mc
+php artisan make:model Order -mc
