@@ -1,0 +1,170 @@
+<?php
+include"config.php";
+?>
+<html>
+<head>
+	<title>CRUD</title>
+	<style type="text/css">
+			.wraper{
+				margin    :0 auto;
+				border    : 1px solid #1e62d0;
+				width     : 1270px;
+				height    : auto;
+				padding   : 10px;
+				font-family: arial;	
+			}
+			.sidebar-left{
+				float: left;
+			}
+			.card{
+				border    :1px solid #ccc;
+				border-radius: 6px;
+				width     : 300px;
+				height    : auto;
+				padding   : 10px;	
+				background-color: yellow;
+			}
+			.sidebar-rigth{
+				border    :1px solid #ccc;
+				border-radius: 6px;
+				width     : 913px;
+				height    : auto;
+				padding   : 10px;
+				float     : left;
+				background-color: blue;
+				margin-left: 10px;
+			}
+			.title{
+				border-left: 4px solid #1e62d0;
+				width     : 1270px;
+				height    : auto;
+				padding   : 10px;
+				font-family: arial;
+				font-weight: bold; font-size: 25px;
+				margin-bottom: 15px;
+			}
+			#title-id{
+				margin-top: 3%;
+				margin-bottom: 5px;
+			}
+			.form{
+				padding: 20px;
+			}
+			.input{
+				border :1px solid #ccc;
+				border-radius: 5px;
+				padding: 7px;
+				width: 100%;
+				margin-bottom: 10px;
+			}
+			.btn {
+				width: 100%;
+				box-shadow:inset 0px 1px 0px 0px #97c4fe;
+				background:green(to bottom, #3d94f6 5%, #1e62d0 100%);
+				background-color:#3d94f6;
+				border-radius:6px;
+				border:1px solid #337fed;
+				display:inline-block;
+				cursor:pointer;
+				color:#ffffff;
+				font-family:Arial;
+				font-size:15px;
+				font-weight:bold;
+				padding:9px 24px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #1570cd;
+			}
+			.btn:hover {
+				background:green(to bottom, #1e62d0 5%, #3d94f6 100%);
+				background-color:green;
+			}
+			.btn:active {
+				position:relative;
+				top:1px;
+			}
+			.table1 {
+				margin-top:12px;
+			    font-family: sans-serif;
+			    color: #444;
+			    border-collapse: collapse;
+			    width: 100%;
+			    border: 1px solid #f2f5f7;
+			}
+			.table1 tr th{
+			    background: #1e62d0;
+			    color: green;
+			    font-weight: normal;
+			}
+			.table1, th, td {
+			    padding: 8px 20px;
+			    text-align: left;
+			}
+			.table1 tr:hover {
+			    background-color: green;
+			}
+			.table1 tr:nth-child(even) {
+			    background-color: green;
+			}
+			.aksi{
+				padding:7px; border-radius:4px; color:blue;
+				font-size: 12px; text-decoration: none;
+			}
+			.red{
+				background-color: green;
+			}
+			.green{
+				background-color: green;
+			}
+			.link-a{
+				text-decoration: none;
+				font-size: 14px;
+				font-weight: bold;
+				background : green;
+				padding: 8px;
+				border-radius: 10px;
+				color : green;
+			}
+	</style>
+</head>
+<body>
+<?php
+include 'config.php';
+session_start();
+error_reporting(0);
+if (isset($_SESSION['username'])) {
+    header("Location: welcome.php");
+}
+if (isset($_POST['submit'])) {
+	$email = $_POST['email'];
+	$password = md5($_POST['password']);
+	$sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+	$result = mysqli_query($conn, $sql);
+	if ($result->
+		</script>
+	<div class="wraper" id="title-id">
+		<div class="title">
+			E-commerce
+		</div>
+		<div class="sidebar-left">
+			<div class="card">
+				<form class="form" action="aksi.php" method="POST">
+				<h3>Tabel Produk</h3>
+					<input type="text"   name="nama" placeholder="Id Admin" class="input" required><br>
+					<input type="number" name="umur" placeholder="Nama Produk" class="input" required><br>
+					<input type="number" name="Harga" placeholder="Deskripsi" class="input" required><br>
+<input type="number" name="Stok" placeholder="Stok" class="input" required><br>
+	<form class="form" action="aksi.php" method="POST">
+				<h3>Tabel Users</h3>
+					<input type="text"   name="nama" placeholder="Id Admin" class="input" required><br>
+					<input type="number" name="umur" placeholder="Nama" class="input" required><br>
+					<input type="number" name="Harga" placeholder="Email" class="input" required><br>
+<input type="number" name="Stok" placeholder="Password" class="input" required><br>
+<h3>Tabel Orders</h3>
+					<input type="text"   name="nama" placeholder="Order_Id" class="input" required><br>
+					<input type="number" name="umur" placeholder="User_Id" class="input" required><br>
+					<input type="number" name="Harga" placeholder="Product_Id" class="input" required><br>
+<input type="number" name="Stok" placeholder="Quantity" class="input" required><br>
+<input type="number" name="Stok" placeholder="Total" class="input" required><br>
+					<input type="submit" name="tambah" value="SIMPAN DATA" class="btn">
+</body>
+</html>
