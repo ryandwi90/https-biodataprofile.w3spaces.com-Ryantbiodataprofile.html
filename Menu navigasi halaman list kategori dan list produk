@@ -1,0 +1,182 @@
+product-management/
+│
+├── index.html                # Halaman utama (navigasi)
+├── kategori.html             # List kategori
+├── produk.html               # List produk
+│
+├── css/
+│   └── style.css             # Gaya umum
+│
+├── js/
+│   ├── kategori.js           # Logic halaman kategori
+│   └── produk.js             # Logic halaman produk
+│
+└── img/
+    └── (gambar produk)
+CREATE TABLE kategori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_kategori VARCHAR(100) NOT NULL
+);
+CREATE TABLE produk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    deskripsi TEXT,
+    stok INT,
+    harga DECIMAL(10, 2),
+    gambar VARCHAR(255),
+    kategori_id INT,
+    FOREIGN KEY (kategori_id) REFERENCES kategori(id)
+);
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>Manajemen Produk</h1>
+  <nav>
+    <a href="kategori.html">List Kategori</a> |
+    <a href="produk.html">List Produk</a>
+  </nav>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>List Kategori</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h2>List Kategori</h2>
+  <button onclick="tambahKategori()">Tambah Kategori</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nama Kategori</th>
+        <th>Jumlah Produk</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tabelKategori">
+      <!-- Data kategori ditampilkan di sini -->
+    </tbody>
+  </table>
+  <script src="js/kategori.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>List Produk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h2>List Produk</h2>
+  <button onclick="tambahProduk()">Tambah Produk</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nama</th>
+        <th>Deskripsi</th>
+        <th>Stok</th>
+        <th>Harga</th>
+        <th>Gambar</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tabelProduk">
+      <!-- Data produk ditampilkan di sini -->
+    </tbody>
+  </table>
+  <script src="js/produk.js"></script>
+</body>
+</html>
+product-management/
+├── index.html
+├── kategori.html
+├── produk.html
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   ├── kategori.js
+│   └── produk.js
+│
+├── api/
+│   ├── config.php
+│   ├── kategori/
+│   │   ├── get.php
+│   │   ├── add.php
+│   │   ├── update.php
+│   │   └── delete.php
+│   └── produk/
+│       ├── get.php
+│       ├── add.php
+│       ├── update.php
+│       └── delete.php
+│
+└── img/
+    └── (gambar produk)
+CREATE DATABASE product_db;
+USE product_db;
+CREATE TABLE kategori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_kategori VARCHAR(100) NOT NULL
+);
+CREATE TABLE produk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    deskripsi TEXT,
+    stok INT,
+    harga DECIMAL(10,2),
+    gambar VARCHAR(255),
+    kategori_id INT,
+    FOREIGN KEY (kategori_id) REFERENCES kategori(id)
+);
+<?php
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "product_db";
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+?>
+<?php
+include '../config.php';
+$sql = "SELECT k.id, k.nama_kategori, COUNT(p.id) AS jumlah_produk
+        FROM kategori k
+        LEFT JOIN produk p ON p.kategori_id = k.id
+        GROUP BY k.id";
+$result = $conn->query($sql);
+$data = [];
+while($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
+echo json_encode($data);
+?>
+<!-- sudah di atas -->
+<script>
+fetch("api/kategori/get.php")
+  .then(res => res.json())
+  .then(data => {
+    let rows = '';
+    data.forEach(k => {
+      rows += `<tr>
+        <td>${k.id}</td>
+        <td>${k.nama_kategori}</td>
+        <td>${k.jumlah_produk}</td>
+        <td>
+          <button>Edit</button>
+          <button>Hapus</button>
+        </td>
+      </tr>`;
+    });
+    document.getElementById("tabelKategori").innerHTML = rows;
+  });
+</script>
