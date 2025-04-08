@@ -1,0 +1,304 @@
+php artisan make:model Product -m
+php artisan make:model ProductCategory -m
+// database/migrations/xxxx_xx_xx_create_product_categories_table.php
+Schema::create('product_categories', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->timestamps();
+});
+// database/migrations/xxxx_xx_xx_create_products_table.php
+Schema::create('products', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->decimal('price', 10, 2);
+    $table->foreignId('product_category_id')->constrained()->onDelete('cascade');
+    $table->timestamps();
+});
+// database/migrations/xxxx_xx_xx_create_products_table.php
+Schema::create('products', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->decimal('price', 10, 2);
+    $table->foreignId('product_category_id')->constrained()->onDelete('cascade');
+    $table->timestamps();
+});
+// app/Models/Product.php
+public function category()
+{
+    return $this->belongsTo(ProductCategory::class, 'product_category_id');
+}
+// app/Models/ProductCategory.php
+public function products()
+{
+    return $this->hasMany(Product::class);
+}
+php artisan make:controller ProductController
+// app/Http/Controllers/ProductController.php
+use App\Models\Product;
+public function index()
+{
+    $products = Product::with('category')->paginate(5); // pagination di sini
+    return view('products.index', compact('products'));
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Produk</title>
+</head>
+<body>
+    <h1>Daftar Produk</h1>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th>Kategori</th>
+        </tr>
+        @foreach ($products as $product)
+        <tr>
+            <td>{{ $product->name }}</td>
+            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+            <td>{{ $product->category->name }}</td>
+        </tr>
+        @endforeach
+    </table>
+
+    {{-- Pagination --}}
+    <div style="margin-top: 20px;">
+        {{ $products->links() }}
+    </div>
+</body>
+</html>
+use App\Http\Controllers\ProductController;
+Route::get('/products', [ProductController::class, 'index']);
+php artisan make:seeder ProductCategorySeeder
+// database/seeders/ProductCategorySeeder.php
+use Illuminate\Database\Seeder;
+use App\Models\ProductCategory;
+class ProductCategorySeeder extends Seeder
+{
+    public function run()
+    {
+        $categories = ['Elektronik', 'Pakaian', 'Makanan', 'Buku', 'Alat Tulis'];
+
+        foreach ($categories as $category) {
+            ProductCategory::create(['name' => $category]);
+        }
+    }
+}
+// database/seeders/DatabaseSeeder.php
+public function run()
+{
+    $this->call([
+        ProductCategorySeeder::class,
+        ProductSeeder::class,
+    ]);
+}
+php artisan migrate:fresh --seed
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Produk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <div class="container">
+        @yield('content')
+    </div>
+</body>
+</html>
+@extends('layouts.app')
+@section('content')
+    <h1 class="mb-4">Daftar Produk</h1>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Nama</th>
+                <th>Harga</th>
+                <th>Kategori</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($products as $product)
+            <tr>
+                <td>{{ $product->name }}</td>
+                <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                <td>{{ $product->category->name }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ $products->links() }}
+    </div>
+@endsection
+npm install -D tailwindcss
+npx tailwindcss init
+content: [
+  "./resources/**/*.blade.php",
+  "./resources/**/*.js",
+  "./resources/**/*.vue",
+],
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+npm run dev
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Produk</title>
+    @vite('resources/css/app.css')
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+        @yield('content')
+    </div>
+</body>
+</html>
+@extends('layouts.app')
+@section('content')
+    <h1 class="text-2xl font-bold mb-4">Daftar Produk</h1>
+    <table class="w-full table-auto border border-gray-300 mb-4">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="px-4 py-2 border">Nama</th>
+                <th class="px-4 py-2 border">Harga</th>
+                <th class="px-4 py-2 border">Kategori</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($products as $product)
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2 border">{{ $product->name }}</td>
+                <td class="px-4 py-2 border">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                <td class="px-4 py-2 border">{{ $product->category->name }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {{ $products->links() }}
+    </div>
+@endsection
+use App\Http\Controllers\ProductController;
+Route::resource('products', ProductController::class);
+use App\Models\Product;
+use App\Models\ProductCategory;
+use Illuminate\Http\Request;
+class ProductController extends Controller
+{
+    public function index()
+    {
+        $products = Product::with('category')->paginate(10);
+        return view('products.index', compact('products'));
+    }
+    public function create()
+    {
+        $categories = ProductCategory::all();
+        return view('products.create', compact('categories'));
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'product_category_id' => 'required|exists:product_categories,id'
+        ]);
+        Product::create($request->all());
+        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+    }
+    public function edit(Product $product)
+    {
+        $categories = ProductCategory::all();
+        return view('products.edit', compact('product', 'categories'));
+    }
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'product_category_id' => 'required|exists:product_categories,id'
+        ]);
+        $product->update($request->all());
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+    }
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+}
+@extends('layouts.app')
+@section('content')
+    <h1 class="text-xl font-bold mb-4">{{ isset($product) ? 'Edit' : 'Tambah' }} Produk</h1>
+    <form method="POST" action="{{ isset($product) ? route('products.update', $product) : route('products.store') }}">
+        @csrf
+        @if(isset($product))
+            @method('PUT')
+        @endif
+        <div class="mb-4">
+            <label class="block mb-1">Nama Produk</label>
+            <input type="text" name="name" value="{{ old('name', $product->name ?? '') }}" class="w-full border p-2 rounded">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Harga</label>
+            <input type="number" name="price" value="{{ old('price', $product->price ?? '') }}" class="w-full border p-2 rounded">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1">Kategori</label>
+            <select name="product_category_id" class="w-full border p-2 rounded">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ (old('product_category_id', $product->product_category_id ?? '') == $category->id) ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+            {{ isset($product) ? 'Update' : 'Simpan' }}
+        </button>
+        <a href="{{ route('products.index') }}" class="ml-2 text-gray-600">Batal</a>
+    </form>
+@endsection
+<td class="px-4 py-2 border flex gap-2">
+    <a href="{{ route('products.edit', $product) }}" class="text-blue-600 underline">Edit</a>
+    <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Yakin ingin hapus?')">
+        @csrf
+        @method('DELETE')
+        <button class="text-red-600 underline">Hapus</button>
+    </form>
+</td>
+<a href="{{ route('products.create') }}" class="bg-green-500 text-white px-4 py-2 rounded mb-4 inline-block">
+    + Tambah Produk
+</a>
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+public function index(Request $request)
+{
+    $query = Product::with('category');
+
+    if ($request->has('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
+    }
+
+    if ($request->has('category') && $request->category != '') {
+        $query->where('product_category_id', $request->category);
+    }
+    $products = $query->paginate(10)->appends($request->query());
+    $categories = ProductCategory::all();
+    return view('products.index', compact('products', 'categories'));
+}
+<form method="GET" action="{{ route('products.index') }}" class="flex flex-wrap gap-2 mb-4">
+    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk"
+        class="border p-2 rounded w-64">
+    <select name="category" class="border p-2 rounded">
+        <option value="">Semua Kategori</option>
+        @foreach($categories as $cat)
+            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                {{ $cat->name }}
+            </option>
+        @endforeach
+    </select>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Cari</button>
+    <a href="{{ route('products.index') }}" class="text-gray-600 px-3 py-2">Reset</a>
+</form>
